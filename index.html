@@ -1,0 +1,869 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>이제이씨코리아 상담 체크리스트</title>
+<style>
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  body { font-family: 'Malgun Gothic', '맑은 고딕', sans-serif; background: #f0f4f8; color: #222; }
+
+  .header {
+    background: linear-gradient(135deg, #1F3864, #2e5096);
+    color: white; padding: 28px 24px; text-align: center;
+  }
+  .header h1 { font-size: 22px; margin-bottom: 6px; }
+  .header p  { font-size: 13px; opacity: 0.85; }
+
+  .container { max-width: 780px; margin: 0 auto; padding: 24px 16px 60px; }
+
+  .tab-bar {
+    display: flex; gap: 8px; margin-bottom: 20px; flex-wrap: wrap;
+  }
+  .tab {
+    padding: 10px 18px; border-radius: 24px; border: 2px solid #1F3864;
+    background: white; color: #1F3864; font-size: 13px; font-weight: 700;
+    cursor: pointer; transition: all .2s;
+  }
+  .tab.active, .tab:hover { background: #1F3864; color: white; }
+
+  .section { display: none; }
+  .section.active { display: block; }
+
+  .card {
+    background: white; border-radius: 12px; padding: 20px 22px;
+    margin-bottom: 16px; box-shadow: 0 2px 8px rgba(0,0,0,.07);
+    border-left: 4px solid #1F3864;
+  }
+  .card h3 { font-size: 14px; color: #1F3864; margin-bottom: 14px; font-weight: 700; }
+
+  .field { margin-bottom: 14px; }
+  .field label { display: block; font-size: 12px; font-weight: 700; color: #444; margin-bottom: 5px; }
+  .field label .req { color: #e53e3e; margin-left: 3px; }
+  .field input[type=text],
+  .field input[type=number],
+  .field input[type=email],
+  .field input[type=tel],
+  .field select,
+  .field textarea {
+    width: 100%; padding: 9px 12px; border: 1.5px solid #dde2ea;
+    border-radius: 7px; font-size: 13px; font-family: inherit;
+    transition: border-color .2s; background: #fafbfc;
+  }
+  .field input:focus, .field select:focus, .field textarea:focus {
+    outline: none; border-color: #1F3864; background: white;
+  }
+  .field textarea { resize: vertical; min-height: 70px; }
+
+  .check-group { display: flex; flex-wrap: wrap; gap: 8px; }
+  .check-item {
+    display: flex; align-items: center; gap: 6px;
+    padding: 6px 12px; border: 1.5px solid #dde2ea; border-radius: 20px;
+    cursor: pointer; font-size: 12px; background: #fafbfc;
+    transition: all .15s; user-select: none;
+  }
+  .check-item input { display: none; }
+  .check-item.checked { background: #e8f0fe; border-color: #1F3864; color: #1F3864; font-weight: 700; }
+
+  .radio-group { display: flex; flex-wrap: wrap; gap: 8px; }
+  .radio-item {
+    display: flex; align-items: center; gap: 6px;
+    padding: 6px 14px; border: 1.5px solid #dde2ea; border-radius: 20px;
+    cursor: pointer; font-size: 12px; background: #fafbfc;
+    transition: all .15s; user-select: none;
+  }
+  .radio-item input { display: none; }
+  .radio-item.selected { background: #1F3864; border-color: #1F3864; color: white; font-weight: 700; }
+
+  .row2 { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; }
+  @media(max-width:480px){ .row2 { grid-template-columns:1fr; } }
+
+  .tip { background: #fffbeb; border: 1px solid #f6d860; border-radius: 8px;
+         padding: 10px 14px; font-size: 11px; color: #7d5a00; margin-bottom: 16px; }
+
+  .btn-row { display: flex; gap: 10px; margin-top: 24px; flex-wrap: wrap; }
+  .btn {
+    flex: 1; min-width: 140px; padding: 13px; border-radius: 8px;
+    font-size: 14px; font-weight: 700; cursor: pointer; border: none;
+    transition: opacity .2s;
+  }
+  .btn:hover { opacity: .88; }
+  .btn-primary { background: #1F3864; color: white; }
+  .btn-copy    { background: #2e7d32; color: white; }
+  .btn-kakao   { background: #FEE500; color: #3A1D1D; font-weight: 700; }
+  .kakao-bar {
+    background: #FEE500; text-align: center; padding: 12px;
+    font-size: 13px; font-weight: 700; color: #3A1D1D;
+  }
+  .kakao-bar a { color: #3A1D1D; text-decoration: none; font-size: 15px; }
+  .btn-reset   { background: #eee; color: #444; }
+
+  .result-box {
+    display: none; margin-top: 20px; padding: 18px; background: #f8faff;
+    border: 2px solid #1F3864; border-radius: 10px;
+    white-space: pre-wrap; font-size: 12px; line-height: 1.8;
+    max-height: 340px; overflow-y: auto;
+  }
+
+  .copy-notice {
+    display: none; text-align: center; color: #2e7d32;
+    font-weight: 700; font-size: 13px; margin-top: 8px;
+  }
+
+  .company-info {
+    text-align: center; font-size: 11px; color: #888; margin-top: 32px;
+    line-height: 1.8;
+  }
+</style>
+</head>
+<body>
+
+<div class="kakao-bar">
+  <a href="https://open.kakao.com/o/ssThztxi" target="_blank">
+    💬 카카오톡 1:1 견적 상담 바로가기 &nbsp;→&nbsp; 이제이씨코리아 견적 문의
+  </a>
+</div>
+<div class="header">
+  <h1>🏷️ 이제이씨코리아 상담 체크리스트</h1>
+  <p>항목을 채우고 복사 후 → 카카오톡 채팅방에 붙여넣기 하시면 빠른 견적을 받으실 수 있습니다.</p>
+</div>
+
+<div class="container">
+
+  <!-- 탭 -->
+  <div class="tab-bar">
+    <div class="tab active" onclick="switchTab('badge')">🏷️ 행사명찰 세트</div>
+    <div class="tab" onclick="switchTab('lanyard')">📿 목걸이줄 단품</div>
+    <div class="tab" onclick="switchTab('print')">🖨️ 인쇄물</div>
+    <div class="tab" onclick="switchTab('import')">🌏 수입 커스텀</div>
+  </div>
+
+  <!-- ══════════════════════════════════ -->
+  <!-- 탭 1: 행사명찰 세트              -->
+  <!-- ══════════════════════════════════ -->
+  <div class="section active" id="tab-badge">
+
+    <div class="tip">💡 명찰 세트는 ① 내지 인쇄 + ② 케이스 + ③ 목걸이줄 3가지를 세트로 구성합니다. 아래 항목을 모두 작성해주시면 정확한 견적이 가능합니다.</div>
+
+    <div class="card" style="border-left-color:#f59e0b;">
+      <h3 style="color:#b45309;">📸 사진으로 간편 전달 (선택)</h3>
+      <p style="font-size:11px;color:#666;margin-bottom:12px;">세부 항목 작성이 어려우시면 사진과 아래 내용만 보내주셔도 됩니다.</p>
+      <div class="field">
+        <label>사진 전달 방법</label>
+        <div class="radio-group" id="b_photo_send">
+          <label class="radio-item"><input type="radio" name="b_ps" value="카카오톡으로 전달"> 카카오톡</label>
+          <label class="radio-item"><input type="radio" name="b_ps" value="이메일로 전달 (vegefruit@hanmail.net)"> 이메일</label>
+          <label class="radio-item"><input type="radio" name="b_ps" value="카카오톡 + 이메일 모두 전달"> 카카오톡 + 이메일</label>
+        </div>
+      </div>
+      <div class="row2">
+        <div class="field">
+          <label>수량</label>
+          <input type="number" id="b_photo_qty" placeholder="예: 500">
+        </div>
+        <div class="field">
+          <label>희망 납기일</label>
+          <input type="text" id="b_photo_date" placeholder="예: 2026-07-01">
+        </div>
+      </div>
+      <div class="field">
+        <label>디자인 요청 / 참고사항</label>
+        <textarea id="b_photo_design" placeholder="예: 로고 색상, 문구, 참고할 스타일 등 자유롭게 적어주세요"></textarea>
+      </div>
+    </div>
+
+    <div class="card">
+      <h3>📋 기본 정보</h3>
+      <div class="row2">
+        <div class="field">
+          <label>담당자 이름 <span class="req">*</span></label>
+          <input type="text" id="b_name" placeholder="예: 김노겸">
+        </div>
+        <div class="field">
+          <label>회사/기관명 <span class="req">*</span></label>
+          <input type="text" id="b_company" placeholder="예: 크림슨">
+        </div>
+      </div>
+      <div class="row2">
+        <div class="field">
+          <label>연락처 <span class="req">*</span></label>
+          <input type="tel" id="b_phone" placeholder="010-0000-0000">
+        </div>
+        <div class="field">
+          <label>이메일</label>
+          <input type="email" id="b_email" placeholder="example@email.com">
+        </div>
+      </div>
+      <div class="field">
+        <label>납품 희망일 <span class="req">*</span></label>
+        <input type="text" id="b_date" placeholder="예: 2026-06-15 (디자인 확정 후 5영업일 소요)">
+      </div>
+    </div>
+
+    <div class="card">
+      <h3>① 명찰 내지 인쇄</h3>
+      <div class="row2">
+        <div class="field">
+          <label>수량 <span class="req">*</span></label>
+          <input type="number" id="b_qty" placeholder="예: 800">
+        </div>
+        <div class="field">
+          <label>내지 사이즈</label>
+          <select id="b_size" onchange="toggleSizeDirect(this.value)">
+            <option value="">선택하세요</option>
+            <option value="95x124mm (기본)">95×124mm (가장 인기 케이스와 호환 사이즈)</option>
+            <option value="86x54mm (명함형)">86×54mm (명함형)</option>
+            <option value="명찰 + 절취선">명찰 + 절취선</option>
+            <option value="명찰내지 + 절취선 + 타공">명찰내지 + 절취선 + 타공</option>
+            <option value="명찰내지 + 절취선 + 타공 + 일련번호">명찰내지 + 절취선 + 타공 + 일련번호</option>
+            <option value="두꺼운 친환경 종이명찰 비표 + 타공">두꺼운 친환경 종이명찰 비표 + 타공</option>
+            <option value="pvc 명찰 비표 단면 인쇄 + 타공">pvc 명찰 비표 단면 인쇄 + 타공</option>
+            <option value="pvc 명찰 비표 양면 인쇄 + 타공">pvc 명찰 비표 양면 인쇄 + 타공</option>
+            <option value="직접입력">직접 입력</option>
+          </select>
+        </div>
+      </div>
+      <div class="field" id="b_size_direct_wrap" style="display:none">
+        <label>사이즈 직접 입력 (가로×세로 mm)</label>
+        <input type="text" id="b_size_direct" placeholder="예: 100×140mm">
+      </div>
+      <div class="field">
+        <label>인쇄 방식 <span class="req">*</span></label>
+        <div class="radio-group" id="b_print_type">
+          <label class="radio-item"><input type="radio" name="b_pt" value="양면 인쇄"> 양면 인쇄</label>
+          <label class="radio-item"><input type="radio" name="b_pt" value="단면 인쇄"> 단면 인쇄</label>
+          <label class="radio-item"><input type="radio" name="b_pt" value="pvc 명찰 비표 단면 인쇄"> pvc 명찰 비표 단면 인쇄</label>
+          <label class="radio-item"><input type="radio" name="b_pt" value="pvc 명찰 비표 양면 인쇄"> pvc 명찰 비표 양면 인쇄</label>
+          <label class="radio-item"><input type="radio" name="b_pt" value="미정"> 미정</label>
+        </div>
+      </div>
+      <div class="field">
+        <label>디자인 제공 방식 <span class="req">*</span></label>
+        <div class="check-group" id="b_design">
+          <label class="check-item"><input type="checkbox" value="AI 파일 (아웃라인) 제공"> AI 파일(아웃라인) 제공</label>
+          <label class="check-item"><input type="checkbox" value="디자인 의뢰 (이제이씨코리아)"> 디자인 의뢰</label>
+          <label class="check-item"><input type="checkbox" value="PDF 확인용 별도 제공"> PDF 확인용 별도 제공</label>
+        </div>
+      </div>
+      <div class="field">
+        <label>가변 데이터 여부 (이름, 소속 등 개인별 다른 정보)</label>
+        <div class="radio-group" id="b_variable">
+          <label class="radio-item"><input type="radio" name="b_var" value="있음 – 엑셀 파일 제공 예정"> 있음 (엑셀 파일 제공)</label>
+          <label class="radio-item"><input type="radio" name="b_var" value="없음 – 동일 디자인"> 없음 (동일 디자인)</label>
+        </div>
+      </div>
+      <div class="field">
+        <label>개인 사진 삽입 여부</label>
+        <div class="radio-group" id="b_photo">
+          <label class="radio-item"><input type="radio" name="b_ph" value="있음 – JPG 개별 파일 제공"> 있음 (JPG 개별 파일 제공)</label>
+          <label class="radio-item"><input type="radio" name="b_ph" value="없음"> 없음</label>
+        </div>
+      </div>
+    </div>
+
+    <div class="card">
+      <h3>② 명찰 케이스</h3>
+      <div class="field">
+        <label>케이스 종류 <span class="req">*</span></label>
+        <div class="radio-group" id="b_case">
+          <label class="radio-item"><input type="radio" name="b_cs" value="케이스 (국산, 95x124mm)"> 케이스 (국산, 95×124mm)</label>
+          <label class="radio-item"><input type="radio" name="b_cs" value="일반 PVC 케이스"> 일반 PVC 케이스</label>
+          <label class="radio-item"><input type="radio" name="b_cs" value="일체형 케이스"> 일체형 케이스</label>
+          <label class="radio-item"><input type="radio" name="b_cs" value="실리콘케이스"> 실리콘케이스</label>
+          <label class="radio-item"><input type="radio" name="b_cs" value="릴일체형 케이스"> 릴일체형 케이스</label>
+          <label class="radio-item"><input type="radio" name="b_cs" value="커스텀 아크릴 케이스"> 커스텀 아크릴 케이스</label>
+          <label class="radio-item"><input type="radio" name="b_cs" value="메탈 케이스"> 메탈 케이스</label>
+          <label class="radio-item"><input type="radio" name="b_cs" value="pp 케이스"> pp 케이스</label>
+          <label class="radio-item"><input type="radio" name="b_cs" value="포토카드 인쇄"> 포토카드 인쇄</label>
+          <label class="radio-item"><input type="radio" name="b_cs" value="케이스 불필요"> 케이스 불필요</label>
+          <label class="radio-item"><input type="radio" name="b_cs" value="미정"> 미정</label>
+          <label class="radio-item"><input type="radio" name="b_cs" value="직접입력"> 직접 입력</label>
+        </div>
+      </div>
+      <div class="field" id="b_case_direct_wrap" style="display:none">
+        <label>케이스 사이즈 직접 입력 (가로×세로 mm)</label>
+        <input type="text" id="b_case_direct" placeholder="예: 100×140mm">
+      </div>
+    </div>
+
+    <div class="card">
+      <h3>③ 목걸이줄</h3>
+      <div class="row2">
+        <div class="field">
+          <label>줄 종류 <span class="req">*</span></label>
+          <select id="b_lanyard" onchange="toggleLanyardDirect(this.value)">
+            <option value="">선택하세요</option>
+            <option value="9mm 줄">9mm 줄</option>
+
+            <option value="10mm 줄">10mm 줄</option>
+            <option value="13mm 줄">13mm 줄</option>
+            <option value="15mm 줄">15mm 줄</option>
+            <option value="20mm 줄">20mm 줄</option>
+            <option value="25mm 줄">25mm 줄</option>
+            <option value="30mm 줄">30mm 줄</option>
+            <option value="실리콘 줄">실리콘 줄</option>
+            <option value="나일론 줄">나일론 줄</option>
+            <option value="튜브사 줄">튜브사 줄</option>
+            <option value="손목 스트랩 줄">손목 스트랩 줄</option>
+            <option value="(올레길. 등산. 둘레길) 리본">(올레길. 등산. 둘레길) 리본</option>
+            <option value="rpet 줄">rpet 줄</option>
+            <option value="대나무사 줄">대나무사 줄</option>
+            <option value="커스텀 인쇄줄">커스텀 인쇄줄 (별도 문의)</option>
+            <option value="줄 불필요">줄 불필요</option>
+            <option value="직접입력">직접 입력</option>
+          </select>
+        </div>
+        <div class="field">
+          <label>줄 색상</label>
+          <input type="text" id="b_lanyard_color" placeholder="예: 검정, 빨강, 네이비 등">
+        </div>
+      </div>
+      <div class="field" id="b_lanyard_direct_wrap" style="display:none">
+        <label>줄 종류 직접 입력</label>
+        <input type="text" id="b_lanyard_direct" placeholder="예: 20mm 면줄, 양쪽 나비클립 등">
+      </div>
+      <div class="field">
+        <label>액세서리</label>
+        <div class="check-group" id="b_accessory">
+          <label class="check-item"><input type="checkbox" value="붕어고리 한개"> 붕어고리 한개</label>
+          <label class="check-item"><input type="checkbox" value="붕어고리 2개"> 붕어고리 2개</label>
+          <label class="check-item"><input type="checkbox" value="멜빵클립 한개"> 멜빵클립 한개</label>
+          <label class="check-item"><input type="checkbox" value="멜빵클립 2개"> 멜빵클립 2개</label>
+          <label class="check-item"><input type="checkbox" value="클립 한개"> 클립 한개</label>
+          <label class="check-item"><input type="checkbox" value="클립 2개"> 클립 2개</label>
+          <label class="check-item"><input type="checkbox" value="안전핀 붕어고리 1개"> 안전핀 붕어고리 1개</label>
+          <label class="check-item"><input type="checkbox" value="안전핀 붕어고리 2개"> 안전핀 붕어고리 2개</label>
+          <label class="check-item"><input type="checkbox" value="안전핀 멜빵클립 1개"> 안전핀 멜빵클립 1개</label>
+          <label class="check-item"><input type="checkbox" value="안전핀 멜빵클립 2개"> 안전핀 멜빵클립 2개</label>
+          <label class="check-item"><input type="checkbox" value="안전핀 클립 1개"> 안전핀 클립 1개</label>
+          <label class="check-item"><input type="checkbox" value="안전핀 클립 2개"> 안전핀 클립 2개</label>
+          <label class="check-item"><input type="checkbox" value="독수리후크"> 독수리후크</label>
+          <label class="check-item"><input type="checkbox" value="360도 회전 후크"> 360도 회전 후크</label>
+          <label class="check-item"><input type="checkbox" value="릴홀더"> 릴홀더</label>
+          <label class="check-item"><input type="checkbox" value="직접입력"> 기타 직접 입력</label>
+        </div>
+      </div>
+      <div class="field" id="b_accessory_direct_wrap" style="display:none">
+        <label>액세서리 직접 입력</label>
+        <input type="text" id="b_accessory_direct" placeholder="원하시는 액세서리를 입력해주세요">
+      </div>
+    </div>
+
+    <div class="card">
+      <h3>④ 인쇄</h3>
+      <div class="field">
+        <label>인쇄 방식</label>
+        <div class="check-group" id="b_print_method">
+          <label class="check-item"><input type="checkbox" value="실크 인쇄"> 실크 인쇄</label>
+          <label class="check-item"><input type="checkbox" value="풀컬러 전사프린팅"> 풀컬러 전사프린팅</label>
+          <label class="check-item"><input type="checkbox" value="프리미엄 실크 프린팅(옵셋인쇄)"> 프리미엄 실크 프린팅(옵셋인쇄)</label>
+          <label class="check-item"><input type="checkbox" value="실리콘 인쇄"> 실리콘 인쇄</label>
+          <label class="check-item"><input type="checkbox" value="자카드 제직"> 자카드 제직</label>
+        </div>
+      </div>
+    </div>
+
+    <div class="card">
+      <h3>⑤ 마감방법</h3>
+      <div class="field">
+        <label>마감 방식</label>
+        <div class="check-group" id="b_finish">
+          <label class="check-item"><input type="checkbox" value="박음질 마감"> 박음질 마감</label>
+          <label class="check-item"><input type="checkbox" value="메탈 마감"> 메탈 마감</label>
+          <label class="check-item"><input type="checkbox" value="박음질 마감 + 플라스틱 커버"> 박음질 마감 + 플라스틱 커버</label>
+          <label class="check-item"><input type="checkbox" value="초음파 마감"> 초음파 마감</label>
+          <label class="check-item"><input type="checkbox" value="리벳 마감"> 리벳 마감</label>
+        </div>
+      </div>
+    </div>
+
+    <div class="card">
+      <h3>📦 배송 정보</h3>
+      <div class="field">
+        <label>배송지 주소 <span class="req">*</span></label>
+        <input type="text" id="b_addr" placeholder="받으실 주소를 입력해주세요">
+      </div>
+      <div class="field">
+        <label>배송 방법</label>
+        <div class="radio-group" id="b_ship">
+          <label class="radio-item"><input type="radio" name="b_sh" value="택배 (착불)"> 택배 착불</label>
+          <label class="radio-item"><input type="radio" name="b_sh" value="택배 (선불)"> 택배 선불</label>
+          <label class="radio-item"><input type="radio" name="b_sh" value="퀵 (착불)"> 퀵 착불</label>
+          <label class="radio-item"><input type="radio" name="b_sh" value="직접 수령"> 직접 수령</label>
+        </div>
+      </div>
+      <div class="field">
+        <label>추가 문의사항</label>
+        <textarea id="b_note" placeholder="특이사항, 요청사항을 자유롭게 적어주세요"></textarea>
+      </div>
+    </div>
+
+    <div class="btn-row">
+      <button class="btn btn-primary" onclick="generateText('badge')">📋 상담 내용 생성</button>
+      <button class="btn btn-copy" onclick="copyText('badge')">📋 복사</button>
+      <a href="https://open.kakao.com/o/ssThztxi" target="_blank" class="btn btn-kakao" style="display:flex;align-items:center;justify-content:center;text-decoration:none;">💬 카카오톡 채팅방 열기</a>
+      <button class="btn btn-reset" onclick="resetForm('badge')">🔄 초기화</button>
+    </div>
+    <div class="result-box" id="result-badge"></div>
+    <div class="copy-notice" id="notice-badge">✅ 복사 완료! 카카오톡 또는 이메일에 붙여넣기 하세요.</div>
+  </div>
+
+  <!-- ══════════════════════════════════ -->
+  <!-- 탭 2: 목걸이줄 단품              -->
+  <!-- ══════════════════════════════════ -->
+  <div class="section" id="tab-lanyard">
+
+    <div class="tip">💡 목걸이줄 단품 주문입니다. 수량·색상·종류를 알려주시면 바로 견적 드립니다.</div>
+
+    <div class="card" style="border-left-color:#f59e0b;">
+      <h3 style="color:#b45309;">📸 사진으로 간편 전달 (선택)</h3>
+      <p style="font-size:11px;color:#666;margin-bottom:12px;">세부 항목 작성이 어려우시면 사진과 아래 내용만 보내주셔도 됩니다.</p>
+      <div class="field">
+        <label>사진 전달 방법</label>
+        <div class="radio-group" id="l_photo_send">
+          <label class="radio-item"><input type="radio" name="l_ps" value="카카오톡으로 전달"> 카카오톡</label>
+          <label class="radio-item"><input type="radio" name="l_ps" value="이메일로 전달 (vegefruit@hanmail.net)"> 이메일</label>
+          <label class="radio-item"><input type="radio" name="l_ps" value="카카오톡 + 이메일 모두 전달"> 카카오톡 + 이메일</label>
+        </div>
+      </div>
+      <div class="row2">
+        <div class="field">
+          <label>수량</label>
+          <input type="number" id="l_photo_qty" placeholder="예: 500">
+        </div>
+        <div class="field">
+          <label>희망 납기일</label>
+          <input type="text" id="l_photo_date" placeholder="예: 2026-07-01">
+        </div>
+      </div>
+      <div class="field">
+        <label>디자인 요청 / 참고사항</label>
+        <textarea id="l_photo_design" placeholder="예: 색상, 사이즈, 참고 스타일 등 자유롭게 적어주세요"></textarea>
+      </div>
+    </div>
+
+    <div class="card">
+      <h3>📋 기본 정보</h3>
+      <div class="row2">
+        <div class="field"><label>담당자 이름 <span class="req">*</span></label><input type="text" id="l_name" placeholder="예: 홍길동"></div>
+        <div class="field"><label>회사/기관명</label><input type="text" id="l_company" placeholder="예: OO협회"></div>
+      </div>
+      <div class="row2">
+        <div class="field"><label>연락처 <span class="req">*</span></label><input type="tel" id="l_phone" placeholder="010-0000-0000"></div>
+        <div class="field"><label>납품 희망일</label><input type="text" id="l_date" placeholder="예: 2026-06-20"></div>
+      </div>
+    </div>
+
+    <div class="card">
+      <h3>📿 주문 상세</h3>
+      <div class="row2">
+        <div class="field">
+          <label>줄 종류 <span class="req">*</span></label>
+          <select id="l_type" onchange="toggleLanyardDirectL(this.value)">
+            <option value="">선택하세요</option>
+            <option value="9mm 줄">9mm 줄</option>
+            <option value="10mm 줄">10mm 줄</option>
+            <option value="13mm 줄">13mm 줄</option>
+            <option value="15mm 줄">15mm 줄</option>
+            <option value="20mm 줄">20mm 줄</option>
+            <option value="25mm 줄">25mm 줄</option>
+            <option value="30mm 줄">30mm 줄</option>
+            <option value="실리콘 줄">실리콘 줄</option>
+            <option value="나일론 줄">나일론 줄</option>
+            <option value="튜브사 줄">튜브사 줄</option>
+            <option value="손목 스트랩 줄">손목 스트랩 줄</option>
+            <option value="(올레길. 등산. 둘레길) 리본">(올레길. 등산. 둘레길) 리본</option>
+            <option value="rpet 줄">rpet 줄</option>
+            <option value="대나무사 줄">대나무사 줄</option>
+            <option value="커스텀 인쇄줄">커스텀 인쇄줄 (별도 문의)</option>
+            <option value="줄 불필요">줄 불필요</option>
+            <option value="직접입력">직접 입력</option>
+          </select>
+        </div>
+        <div class="field">
+          <label>줄 색상</label>
+          <input type="text" id="l_color" placeholder="예: 검정, 빨강, 네이비">
+        </div>
+      </div>
+      <div class="field" id="l_type_direct_wrap" style="display:none">
+        <label>줄 종류 직접 입력</label>
+        <input type="text" id="l_type_direct" placeholder="예: 20mm 면줄, 양쪽 나비클립 등">
+      </div>
+      <div class="field">
+        <label>인쇄</label>
+        <div class="check-group" id="l_print_method">
+          <label class="check-item"><input type="checkbox" value="실크 인쇄"> 실크 인쇄</label>
+          <label class="check-item"><input type="checkbox" value="풀컬러 전사프린팅"> 풀컬러 전사프린팅</label>
+          <label class="check-item"><input type="checkbox" value="프리미엄 실크 프린팅(옵셋인쇄)"> 프리미엄 실크 프린팅(옵셋인쇄)</label>
+          <label class="check-item"><input type="checkbox" value="실리콘 인쇄"> 실리콘 인쇄</label>
+          <label class="check-item"><input type="checkbox" value="자카드 제직"> 자카드 제직</label>
+        </div>
+      </div>
+      <div class="field">
+        <label>액세서리</label>
+        <div class="check-group" id="l_accessory">
+          <label class="check-item"><input type="checkbox" value="붕어고리 한개"> 붕어고리 한개</label>
+          <label class="check-item"><input type="checkbox" value="붕어고리 2개"> 붕어고리 2개</label>
+          <label class="check-item"><input type="checkbox" value="멜빵클립 한개"> 멜빵클립 한개</label>
+          <label class="check-item"><input type="checkbox" value="멜빵클립 2개"> 멜빵클립 2개</label>
+          <label class="check-item"><input type="checkbox" value="클립 한개"> 클립 한개</label>
+          <label class="check-item"><input type="checkbox" value="클립 2개"> 클립 2개</label>
+          <label class="check-item"><input type="checkbox" value="안전핀 붕어고리 1개"> 안전핀 붕어고리 1개</label>
+          <label class="check-item"><input type="checkbox" value="안전핀 붕어고리 2개"> 안전핀 붕어고리 2개</label>
+          <label class="check-item"><input type="checkbox" value="안전핀 멜빵클립 1개"> 안전핀 멜빵클립 1개</label>
+          <label class="check-item"><input type="checkbox" value="안전핀 멜빵클립 2개"> 안전핀 멜빵클립 2개</label>
+          <label class="check-item"><input type="checkbox" value="안전핀 클립 1개"> 안전핀 클립 1개</label>
+          <label class="check-item"><input type="checkbox" value="안전핀 클립 2개"> 안전핀 클립 2개</label>
+          <label class="check-item"><input type="checkbox" value="독수리후크"> 독수리후크</label>
+          <label class="check-item"><input type="checkbox" value="360도 회전 후크"> 360도 회전 후크</label>
+          <label class="check-item"><input type="checkbox" value="릴홀더"> 릴홀더</label>
+          <label class="check-item"><input type="checkbox" value="직접입력"> 기타 직접 입력</label>
+        </div>
+      </div>
+      <div class="field" id="l_accessory_direct_wrap" style="display:none">
+        <label>액세서리 직접 입력</label>
+        <input type="text" id="l_accessory_direct" placeholder="원하시는 액세서리를 입력해주세요">
+      </div>
+      <div class="row2">
+        <div class="field"><label>수량 <span class="req">*</span></label><input type="number" id="l_qty" placeholder="예: 500"></div>
+        <div class="field"><label>배송지</label><input type="text" id="l_addr" placeholder="받으실 주소"></div>
+      </div>
+      <div class="field"><label>추가 문의</label><textarea id="l_note" placeholder="특이사항을 입력하세요"></textarea></div>
+    </div>
+
+    <div class="btn-row">
+      <button class="btn btn-primary" onclick="generateText('lanyard')">📋 상담 내용 생성</button>
+      <button class="btn btn-copy" onclick="copyText('lanyard')">📋 복사</button>
+      <a href="https://open.kakao.com/o/ssThztxi" target="_blank" class="btn btn-kakao" style="display:flex;align-items:center;justify-content:center;text-decoration:none;">💬 카카오톡 채팅방 열기</a>
+      <button class="btn btn-reset" onclick="resetForm('lanyard')">🔄 초기화</button>
+    </div>
+    <div class="result-box" id="result-lanyard"></div>
+    <div class="copy-notice" id="notice-lanyard">✅ 복사 완료!</div>
+  </div>
+
+  <!-- ══════════════════════════════════ -->
+  <!-- 탭 3: 인쇄물                      -->
+  <!-- ══════════════════════════════════ -->
+  <div class="section" id="tab-print">
+    <div class="tip">💡 명찰 내지 외 스티커, 현수막, 팜플렛 등 인쇄물 문의입니다.</div>
+
+    <div class="card">
+      <h3>📋 기본 정보</h3>
+      <div class="row2">
+        <div class="field"><label>담당자 이름 <span class="req">*</span></label><input type="text" id="p_name" placeholder="이름"></div>
+        <div class="field"><label>연락처 <span class="req">*</span></label><input type="tel" id="p_phone" placeholder="010-0000-0000"></div>
+      </div>
+    </div>
+
+    <div class="card">
+      <h3>🖨️ 인쇄 상세</h3>
+      <div class="field">
+        <label>인쇄물 종류 <span class="req">*</span></label>
+        <div class="check-group" id="p_type">
+          <label class="check-item"><input type="checkbox" value="명찰 내지"> 명찰 내지</label>
+          <label class="check-item"><input type="checkbox" value="스티커"> 스티커</label>
+          <label class="check-item"><input type="checkbox" value="현수막"> 현수막</label>
+          <label class="check-item"><input type="checkbox" value="팜플렛/리플렛"> 팜플렛/리플렛</label>
+          <label class="check-item"><input type="checkbox" value="기타"> 기타</label>
+        </div>
+      </div>
+      <div class="row2">
+        <div class="field"><label>수량</label><input type="number" id="p_qty" placeholder="수량"></div>
+        <div class="field"><label>사이즈 (가로×세로 mm)</label><input type="text" id="p_size" placeholder="예: 95×124mm"></div>
+      </div>
+      <div class="field">
+        <label>인쇄 방식</label>
+        <div class="radio-group" id="p_side">
+          <label class="radio-item"><input type="radio" name="p_sd" value="단면"> 단면</label>
+          <label class="radio-item"><input type="radio" name="p_sd" value="양면"> 양면</label>
+        </div>
+      </div>
+      <div class="field"><label>디자인 파일 / 요청사항</label><textarea id="p_note" placeholder="AI, PDF, 이미지 파일 여부, 특이사항 등"></textarea></div>
+    </div>
+
+    <div class="btn-row">
+      <button class="btn btn-primary" onclick="generateText('print')">📋 상담 내용 생성</button>
+      <button class="btn btn-copy" onclick="copyText('print')">📋 복사</button>
+      <a href="https://open.kakao.com/o/ssThztxi" target="_blank" class="btn btn-kakao" style="display:flex;align-items:center;justify-content:center;text-decoration:none;">💬 카카오톡 채팅방 열기</a>
+      <button class="btn btn-reset" onclick="resetForm('print')">🔄 초기화</button>
+    </div>
+    <div class="result-box" id="result-print"></div>
+    <div class="copy-notice" id="notice-print">✅ 복사 완료!</div>
+  </div>
+
+  <!-- ══════════════════════════════════ -->
+  <!-- 탭 4: 수입 커스텀                -->
+  <!-- ══════════════════════════════════ -->
+  <div class="section" id="tab-import">
+    <div class="tip">💡 중국 등 해외 공장 커스텀 제작 문의입니다. 최소 주문수량(MOQ) 및 리드타임이 국내 제품보다 깁니다.</div>
+
+    <div class="card" style="border-left-color:#f59e0b;">
+      <h3 style="color:#b45309;">📸 사진으로 간편 전달 (선택)</h3>
+      <p style="font-size:11px;color:#666;margin-bottom:12px;">세부 항목 작성이 어려우시면 사진과 아래 내용만 보내주셔도 됩니다.</p>
+      <div class="field">
+        <label>사진 전달 방법</label>
+        <div class="radio-group" id="i_photo_send">
+          <label class="radio-item"><input type="radio" name="i_ps" value="카카오톡으로 전달"> 카카오톡</label>
+          <label class="radio-item"><input type="radio" name="i_ps" value="이메일로 전달 (vegefruit@hanmail.net)"> 이메일</label>
+          <label class="radio-item"><input type="radio" name="i_ps" value="카카오톡 + 이메일 모두 전달"> 카카오톡 + 이메일</label>
+        </div>
+      </div>
+      <div class="row2">
+        <div class="field">
+          <label>수량</label>
+          <input type="number" id="i_photo_qty" placeholder="예: 1000">
+        </div>
+        <div class="field">
+          <label>희망 납기일</label>
+          <input type="text" id="i_photo_date" placeholder="예: 2026-09-01">
+        </div>
+      </div>
+      <div class="field">
+        <label>디자인 요청 / 참고사항</label>
+        <textarea id="i_photo_design" placeholder="예: 로고, 색상코드, 소재, 참고 이미지 설명 등 자유롭게 적어주세요"></textarea>
+      </div>
+    </div>
+
+    <div class="card">
+      <h3>📋 기본 정보</h3>
+      <div class="row2">
+        <div class="field"><label>담당자 이름 <span class="req">*</span></label><input type="text" id="i_name" placeholder="이름"></div>
+        <div class="field"><label>연락처 <span class="req">*</span></label><input type="tel" id="i_phone" placeholder="010-0000-0000"></div>
+      </div>
+    </div>
+
+    <div class="card">
+      <h3>🌏 커스텀 상품 상세</h3>
+      <div class="field"><label>제품명 / 품목 <span class="req">*</span></label><input type="text" id="i_item" placeholder="예: 커스텀 목걸이줄, 배지, 에코백 등"></div>
+      <div class="row2">
+        <div class="field"><label>수량 <span class="req">*</span></label><input type="number" id="i_qty" placeholder="수량 (MOQ 확인 필요)"></div>
+        <div class="field"><label>납품 희망일</label><input type="text" id="i_date" placeholder="예: 2026-08-01"></div>
+      </div>
+      <div class="field">
+        <label>커스텀 요소 <span class="req">*</span></label>
+        <div class="check-group" id="i_custom">
+          <label class="check-item"><input type="checkbox" value="로고/문구 인쇄"> 로고/문구 인쇄</label>
+          <label class="check-item"><input type="checkbox" value="색상 지정"> 색상 지정</label>
+          <label class="check-item"><input type="checkbox" value="사이즈 변경"> 사이즈 변경</label>
+          <label class="check-item"><input type="checkbox" value="소재 지정"> 소재 지정</label>
+          <label class="check-item"><input type="checkbox" value="패키지/박스"> 패키지/박스</label>
+        </div>
+      </div>
+      <div class="field"><label>참고 이미지 / 샘플 있음?</label>
+        <div class="radio-group" id="i_sample">
+          <label class="radio-item"><input type="radio" name="i_sm" value="있음 – 이메일로 전송 예정"> 있음 (이메일 전송 예정)</label>
+          <label class="radio-item"><input type="radio" name="i_sm" value="없음 – 제안 요청"> 없음 (제안 요청)</label>
+        </div>
+      </div>
+      <div class="field"><label>추가 요청사항</label><textarea id="i_note" placeholder="소재, 색상코드, 특이사항 등 자유롭게 작성"></textarea></div>
+    </div>
+
+    <div class="btn-row">
+      <button class="btn btn-primary" onclick="generateText('import')">📋 상담 내용 생성</button>
+      <button class="btn btn-copy" onclick="copyText('import')">📋 복사</button>
+      <a href="https://open.kakao.com/o/ssThztxi" target="_blank" class="btn btn-kakao" style="display:flex;align-items:center;justify-content:center;text-decoration:none;">💬 카카오톡 채팅방 열기</a>
+      <button class="btn btn-reset" onclick="resetForm('import')">🔄 초기화</button>
+    </div>
+    <div class="result-box" id="result-import"></div>
+    <div class="copy-notice" id="notice-import">✅ 복사 완료!</div>
+  </div>
+
+  <div class="company-info">
+    이제이씨코리아 | 사업자번호 117-06-13687 | 대표 최정희<br>
+    서울시 도봉구 도봉로136길 28, 창동북한산아이파크 501동 1802호<br>
+    📞 010-5443-0194 &nbsp;|&nbsp; ✉️ vegefruit@hanmail.net
+  </div>
+</div>
+
+<script>
+// 내지 사이즈 직접입력 토글
+function toggleSizeDirect(v) {
+  document.getElementById('b_size_direct_wrap').style.display = (v === '직접입력') ? 'block' : 'none';
+}
+
+// 케이스 직접입력 토글
+function toggleCaseDirect(v) {
+  document.getElementById('b_case_direct_wrap').style.display = (v === '직접입력') ? 'block' : 'none';
+}
+
+// 줄 종류 직접입력 토글 (행사명찰)
+function toggleLanyardDirect(v) {
+  document.getElementById('b_lanyard_direct_wrap').style.display = (v === '직접입력') ? 'block' : 'none';
+}
+// 줄 종류 직접입력 토글 (목걸이줄 단품)
+function toggleLanyardDirectL(v) {
+  document.getElementById('l_type_direct_wrap').style.display = (v === '직접입력') ? 'block' : 'none';
+}
+
+// 탭 전환
+function switchTab(id) {
+  document.querySelectorAll('.section').forEach(s => s.classList.remove('active'));
+  document.querySelectorAll('.tab').forEach(t => t.classList.remove('active'));
+  document.getElementById('tab-' + id).classList.add('active');
+  event.target.classList.add('active');
+}
+
+// 체크박스/라디오 토글
+document.querySelectorAll('.check-group').forEach(g => {
+  g.querySelectorAll('.check-item').forEach(item => {
+    item.addEventListener('click', (e) => {
+      if (e.target.tagName === 'INPUT') return; // input 클릭 이벤트 중복 방지
+      item.classList.toggle('checked');
+      if (item.querySelector('input').value === '직접입력') {
+        if (g.id === 'b_accessory')
+          document.getElementById('b_accessory_direct_wrap').style.display =
+            item.classList.contains('checked') ? 'block' : 'none';
+        if (g.id === 'l_accessory')
+          document.getElementById('l_accessory_direct_wrap').style.display =
+            item.classList.contains('checked') ? 'block' : 'none';
+      }
+    });
+  });
+});
+document.querySelectorAll('.radio-group').forEach(g => {
+  g.querySelectorAll('.radio-item').forEach(item => {
+    item.addEventListener('click', () => {
+      g.querySelectorAll('.radio-item').forEach(i => i.classList.remove('selected'));
+      item.classList.add('selected');
+      if (g.id === 'b_case') toggleCaseDirect(item.querySelector('input').value);
+    });
+  });
+});
+
+function getChecked(groupId) {
+  return [...document.querySelectorAll(`#${groupId} .check-item.checked`)]
+    .map(i => i.querySelector('input').value).join(', ') || '미선택';
+}
+function getRadio(groupId) {
+  const sel = document.querySelector(`#${groupId} .radio-item.selected`);
+  return sel ? sel.querySelector('input').value : '미선택';
+}
+function val(id) { return document.getElementById(id)?.value?.trim() || '미입력'; }
+
+function generateText(type) {
+  let text = '';
+  const now = new Date().toLocaleDateString('ko-KR');
+
+  if (type === 'badge') {
+    text = `[이제이씨코리아 행사명찰 견적 문의] ${now}
+━━━━━━━━━━━━━━━━━━━━━
+▶ 담당자: ${val('b_name')} / ${val('b_company')}
+▶ 연락처: ${val('b_phone')} / ${val('b_email')}
+▶ 납품 희망일: ${val('b_date')}
+━━━━━━━━━━━━━━━━━━━━━
+① 명찰 내지 인쇄
+  - 수량: ${val('b_qty')}장
+  - 내지 사이즈: ${val('b_size') === '직접입력' ? val('b_size_direct') : val('b_size')}
+  - 인쇄 방식: ${getRadio('b_print_type')}
+  - 디자인 제공: ${getChecked('b_design')}
+  - 가변 데이터: ${getRadio('b_variable')}
+  - 개인 사진 삽입: ${getRadio('b_photo')}
+
+② 명찰 케이스: ${getRadio('b_case') === '직접입력' ? val('b_case_direct') : getRadio('b_case')}
+
+③ 목걸이줄
+  - 줄 종류: ${val('b_lanyard') === '직접입력' ? val('b_lanyard_direct') : val('b_lanyard')}
+  - 줄 색상: ${val('b_lanyard_color')}
+  - 액세서리: ${getChecked('b_accessory').replace('직접입력', val('b_accessory_direct'))}
+
+📦 배송지: ${val('b_addr')}
+📦 배송 방법: ${getRadio('b_ship')}
+
+📝 추가 문의: ${val('b_note')}
+📸 사진 전달: ${getRadio('b_photo_send')} / 수량: ${val('b_photo_qty')} / 희망 납기: ${val('b_photo_date')}
+   디자인 요청: ${val('b_photo_design')}
+━━━━━━━━━━━━━━━━━━━━━
+이제이씨코리아 | 010-5443-0194`;
+  }
+
+  else if (type === 'lanyard') {
+    text = `[이제이씨코리아 목걸이줄 견적 문의] ${now}
+━━━━━━━━━━━━━━━━━━━━━
+▶ 담당자: ${val('l_name')} / ${val('l_company')}
+▶ 연락처: ${val('l_phone')}
+▶ 납품 희망일: ${val('l_date')}
+━━━━━━━━━━━━━━━━━━━━━
+▶ 줄 종류: ${val('l_type') === '직접입력' ? val('l_type_direct') : val('l_type')}
+▶ 줄 색상: ${val('l_color')}
+▶ 액세서리: ${getChecked('l_accessory').replace('직접입력', val('l_accessory_direct'))}
+▶ 수량: ${val('l_qty')}개
+▶ 배송지: ${val('l_addr')}
+📝 추가 문의: ${val('l_note')}
+📸 사진 전달: ${getRadio('l_photo_send')} / 수량: ${val('l_photo_qty')} / 희망 납기: ${val('l_photo_date')}
+   디자인 요청: ${val('l_photo_design')}
+━━━━━━━━━━━━━━━━━━━━━
+이제이씨코리아 | 010-5443-0194`;
+  }
+
+  else if (type === 'print') {
+    text = `[이제이씨코리아 인쇄물 견적 문의] ${now}
+━━━━━━━━━━━━━━━━━━━━━
+▶ 담당자: ${val('p_name')} / 연락처: ${val('p_phone')}
+━━━━━━━━━━━━━━━━━━━━━
+▶ 인쇄물 종류: ${getChecked('p_type')}
+▶ 수량: ${val('p_qty')}
+▶ 사이즈: ${val('p_size')}
+▶ 인쇄 방식: ${getRadio('p_side')}
+📝 요청사항: ${val('p_note')}
+━━━━━━━━━━━━━━━━━━━━━
+이제이씨코리아 | 010-5443-0194`;
+  }
+
+  else if (type === 'import') {
+    text = `[이제이씨코리아 수입 커스텀 견적 문의] ${now}
+━━━━━━━━━━━━━━━━━━━━━
+▶ 담당자: ${val('i_name')} / 연락처: ${val('i_phone')}
+━━━━━━━━━━━━━━━━━━━━━
+▶ 제품명: ${val('i_item')}
+▶ 수량: ${val('i_qty')}
+▶ 납품 희망일: ${val('i_date')}
+▶ 커스텀 요소: ${getChecked('i_custom')}
+▶ 샘플/참고 이미지: ${getRadio('i_sample')}
+📝 추가 요청사항: ${val('i_note')}
+📸 사진 전달: ${getRadio('i_photo_send')} / 수량: ${val('i_photo_qty')} / 희망 납기: ${val('i_photo_date')}
+   디자인 요청: ${val('i_photo_design')}
+━━━━━━━━━━━━━━━━━━━━━
+이제이씨코리아 | 010-5443-0194`;
+  }
+
+  const box = document.getElementById('result-' + type);
+  box.style.display = 'block';
+  box.textContent = text;
+  box._text = text;
+}
+
+function copyText(type) {
+  generateText(type);
+  const box = document.getElementById('result-' + type);
+  const notice = document.getElementById('notice-' + type);
+  const text = box._text;
+
+  // 임시 textarea로 복사 (로컬 파일에서도 동작)
+  const ta = document.createElement('textarea');
+  ta.value = text;
+  ta.style.cssText = 'position:fixed;top:0;left:0;opacity:0;';
+  document.body.appendChild(ta);
+  ta.focus();
+  ta.select();
+  try {
+    document.execCommand('copy');
+    notice.style.display = 'block';
+    setTimeout(() => notice.style.display = 'none', 3000);
+  } catch(e) {
+    alert('복사 실패. 생성된 텍스트를 직접 드래그해서 복사해주세요.');
+  }
+  document.body.removeChild(ta);
+}
+
+function resetForm(type) {
+  const section = document.getElementById('tab-' + type);
+  section.querySelectorAll('input[type=text],input[type=number],input[type=email],input[type=tel],textarea').forEach(el => el.value = '');
+  section.querySelectorAll('select').forEach(el => el.selectedIndex = 0);
+  section.querySelectorAll('.check-item').forEach(el => el.classList.remove('checked'));
+  section.querySelectorAll('.radio-item').forEach(el => el.classList.remove('selected'));
+  document.getElementById('result-' + type).style.display = 'none';
+  document.getElementById('notice-' + type).style.display = 'none';
+}
+</script>
+</body>
+</html>
